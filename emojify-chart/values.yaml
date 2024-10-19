@@ -1,0 +1,21 @@
+replicaCount: 1
+
+image:
+  repository: cr.yandex/crp8nu6sshurc917bput/emojify
+  tag: "latest"
+  pullPolicy: IfNotPresent
+
+service:
+  type: LoadBalancer
+  port: 80
+
+resources:
+  limits:
+    cpu: 100m
+    memory: 128Mi
+  requests:
+    cpu: 100m
+    memory: 64Mi
+
+env:
+  SECRET_KEY: "${{ secrets.SECRET_KEY }}"

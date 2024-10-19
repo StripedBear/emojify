@@ -1,0 +1,30 @@
+alertmanager:
+  enabled: true
+  service:
+    type: LoadBalancer
+
+server:
+  enabled: true
+  service:
+    type: LoadBalancer
+    port: 80
+
+pushgateway:
+  enabled: false
+
+resources:
+  limits:
+    cpu: 500m
+    memory: 512Mi
+  requests:
+    cpu: 250m
+    memory: 256Mi
+
+scrape_configs:
+  - job_name: 'emojify'
+    kubernetes_sd_configs:
+      - role: endpoints
+    relabel_configs:
+      - source_labels: [__meta_kubernetes_service_name]
+        action: keep
+        regex: emojify

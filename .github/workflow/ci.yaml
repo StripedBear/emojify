@@ -1,0 +1,62 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Log in to Yandex Cloud Container Registry
+        run: |
+          echo "${{ secrets.YC_SERVICE_ACCOUNT_KEY }}" > /tmp/key.json
+          yc container registry configure-docker --registry-id ${{ secrets.REGISTRY_ID }} --service-account-key /tmp/key.json
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v3
+        with:
+          context: .
+          push: true
+          tags: cr.yandex/${{ secrets.REGISTRY_ID }}/emojify:${{ github.sha }}
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up kubectl
+        uses: azure/setup-kubectl@v1
+        with:
+          version: 'latest'
+
+      - name: Deploy Prometheus
+        run: |
+          echo "$KUBE_CONFIG_DATA" | base64 --decode > kubeconfig
+          helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+          helm upgrade --install prometheus prometheus-community/prometheus \
+            -f prometheus-values.yaml --kubeconfig=kubeconfig
+
+      - name: Deploy Graylog
+        run: |
+          echo "$KUBE_CONFIG_DATA" | base64 --decode > kubeconfig
+          helm repo add graylog https://helm.graylog2.org
+          helm upgrade --install graylog graylog/graylog \
+            -f graylog-values.yaml --kubeconfig=kubeconfig
+
+      - name: Deploy Emojify
+        env:
+          KUBE_CONFIG_DATA: ${{ secrets.KUBE_CONFIG_DATA }}
+        run: |
+          echo "$KUBE_CONFIG_DATA" | base64 --decode > kubeconfig
+          helm upgrade --install emojify ./emojify-chart --kubeconfig=kubeconfig

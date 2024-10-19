@@ -1,0 +1,18 @@
+# Настройки для установки Graylog
+mongodb:
+  enabled: true
+  auth:
+    enabled: false
+
+elasticsearch:
+  enabled: false
+
+graylog:
+  service:
+    type: LoadBalancer
+    externalPort: 9000
+  root_password_secret: "${{ secrets.GRAYLOG_ADMIN_PSWD }}"
+  environment:
+    GRAYLOG_PASSWORD_SECRET: "${{ secrets.SECRET_KEY }}"
+    GRAYLOG_ROOT_PASSWORD_SHA2: "$(echo -n '${{ secrets.GRAYLOG_ADMIN_PSWD }}' | sha256sum | awk '{print $1}')"
+    GRAYLOG_HTTP_EXTERNAL_URI: "http://<EXTERNAL-IP>:9000/"
