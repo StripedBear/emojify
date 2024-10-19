@@ -28,7 +28,7 @@ jobs:
           echo "${{ secrets.YC_SERVICE_ACCOUNT_KEY }}" > /tmp/key.json
           yc config set service-account-key /tmp/key.json
           yc config set folder-id ${{ secrets.YC_FOLDER_ID }}
-          # yc config profile create default
+          yc config profile create default
 
       - name: Log in to Yandex Cloud Container Registry
         run: |
