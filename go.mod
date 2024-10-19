@@ -1,4 +1,4 @@
-module github.com/haukened/emojify
+module github.com/StripedBear/emojify
 
 go 1.13
 
