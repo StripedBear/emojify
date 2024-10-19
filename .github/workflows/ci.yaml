@@ -26,9 +26,9 @@ jobs:
           export PATH="$PATH:$HOME/yandex-cloud/bin"
           source ~/.bashrc
           echo "${{ secrets.YC_SERVICE_ACCOUNT_KEY }}" > /tmp/key.json
-          yc config profile create default
-          yc version
-          yc config list
+          yc config set service-account-key /tmp/key.json
+          yc config set folder-id ${{ secrets.YC_FOLDER_ID }}
+          # yc config profile create default
 
       - name: Log in to Yandex Cloud Container Registry
         run: |
@@ -43,7 +43,6 @@ jobs:
           context: .
           push: true
           tags: cr.yandex/${{ secrets.YC_REGISTRY }}/emojify:${{ github.sha }}
-          load: true
 
   deploy:
     needs: build
