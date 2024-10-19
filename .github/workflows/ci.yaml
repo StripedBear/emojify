@@ -29,7 +29,6 @@ jobs:
         run: |
           echo "${{ secrets.YC_SERVICE_ACCOUNT_KEY }}" > /tmp/key.json
           export PATH="$PATH:$HOME/yandex-cloud/bin"
-          yc auth create --service-account-key /tmp/key.json
           yc container registry configure-docker --service-account-key /tmp/key.json
 
       - name: Build and push Docker image
