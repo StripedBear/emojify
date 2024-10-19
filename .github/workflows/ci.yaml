@@ -43,6 +43,7 @@ jobs:
           context: .
           push: true
           tags: cr.yandex/${{ secrets.REGISTRY_ID }}/emojify:${{ github.sha }}
+          load: true
 
   deploy:
     needs: build
