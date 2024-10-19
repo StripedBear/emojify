@@ -66,7 +66,7 @@ jobs:
         run: |
           export PATH="$PATH:$HOME/yandex-cloud/bin"
           mkdir -p $HOME/.kube
-          yc managed-kubernetes cluster get-credentials <имя-кластера> --external --force
+          yc managed-kubernetes cluster get-credentials ${{ secrets.CLUSTER_NAME }} --external --force
           mv ~/.kube/config $HOME/.kube/config
 
       - name: Set up kubectl
