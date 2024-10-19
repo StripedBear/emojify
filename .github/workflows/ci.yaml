@@ -22,12 +22,13 @@ jobs:
       - name: Install Yandex Cloud CLI
         run: |
           curl -sSL https://storage.yandexcloud.net/yandexcloud-yc/install.sh | bash
-          echo "$HOME/yandex-cloud/bin" >> $GITHUB_PATH
+          export PATH="$PATH:$HOME/yandex-cloud/bin"
           yc version
 
       - name: Log in to Yandex Cloud Container Registry
         run: |
           echo "${{ secrets.YC_SERVICE_ACCOUNT_KEY }}" > /tmp/key.json
+          export PATH="$PATH:$HOME/yandex-cloud/bin"
           yc container registry configure-docker --registry-id ${{ secrets.REGISTRY_ID }} --service-account-key /tmp/key.json
 
       - name: Build and push Docker image
@@ -43,6 +44,12 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
+
+      - name: Install Yandex Cloud CLI
+        run: |
+          curl -sSL https://storage.yandexcloud.net/yandexcloud-yc/install.sh | bash
+          export PATH="$PATH:$HOME/yandex-cloud/bin"
+          yc version
 
       - name: Set up kubectl
         uses: azure/setup-kubectl@v1
