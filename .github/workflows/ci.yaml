@@ -64,15 +64,15 @@ jobs:
 
       - name: Deploy Prometheus
         run: |
-          echo "$KUBE_CONFIG_DATA" | base64 --decode > kubeconfig
+          echo "$KUBE_CONFIG_DATA" | base64 --decode > $HOME/.kube/config
           chmod 600 $HOME/.kube/config
           helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
           helm upgrade --install prometheus prometheus-community/prometheus \
-            -f prometheus-values.yaml --kubeconfig=kubeconfig
+            -f prometheus-values.yaml --kubeconfig=$HOME/.kube/config
 
       - name: Deploy Graylog
         run: |
-          echo "$KUBE_CONFIG_DATA" | base64 --decode > kubeconfig
+          echo "$KUBE_CONFIG_DATA" | base64 --decode > $HOME/.kube/config
           helm repo add graylog https://helm.graylog2.org
           helm upgrade --install graylog graylog/graylog \
             -f graylog-values.yaml --kubeconfig=kubeconfig
