@@ -29,8 +29,8 @@ jobs:
         run: |
           echo "${{ secrets.YC_SERVICE_ACCOUNT_KEY }}" > /tmp/key.json
           export PATH="$PATH:$HOME/yandex-cloud/bin"
-          yc auth activate-service-account --key-file /tmp/key.json
-          docker login --username oauth --password "$(yc iam create-token)" cr.yandex
+          echo "${{ secrets.YC_TOKEN }} | docker login --username oauth --password-stdin cr.yandex
+          yc container registry configure-docker
 
       - name: Build and push Docker image
         uses: docker/build-push-action@v3
