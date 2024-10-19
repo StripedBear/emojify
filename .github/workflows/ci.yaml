@@ -25,17 +25,10 @@ jobs:
           echo "$HOME/yandex-cloud/bin" >> $GITHUB_PATH
           export PATH="$PATH:$HOME/yandex-cloud/bin"
           source ~/.bashrc
-          echo '{
-            "id": "ajesctl7kfgd1d6kc66f",
-            "service_account_id": "ajeg8pv17uf7ssm48kcr",
-            "created_at": "2024-10-19T12:59:44.254198937Z",
-            "key_algorithm": "RSA_2048",
-            "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvAIBADANBgkqhkiG9w0BAQEFAASCBKYwggSiAgEAAoIBAQDKGoB4Q2RT6IQH...\n-----END PRIVATE KEY-----\n"
-            }' > /tmp/key.json
+          echo "${{ secrets.YC_SERVICE_ACCOUNT_KEY }}" > /tmp/key.json
           yc config set service-account-key /tmp/key.json
           yc config set cloud-id ${{ secrets.YC_CLOUD_ID }}
           yc config set folder-id ${{ secrets.YC_FOLDER_ID }}
-          yc config profile create default
 
       - name: Log in to Yandex Cloud Container Registry
         run: |
