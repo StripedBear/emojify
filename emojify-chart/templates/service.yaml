@@ -5,9 +5,9 @@ metadata:
   labels:
     app: emojify
 spec:
-  type: {{ .Values.service.type }}
+  type: LoadBalancer
   ports:
-    - port: {{ .Values.service.port }}
+    - port: 80
       targetPort: 8080
   selector:
     app: emojify
