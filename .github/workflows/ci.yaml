@@ -25,6 +25,9 @@ jobs:
           echo "$HOME/yandex-cloud/bin" >> $GITHUB_PATH
           export PATH="$PATH:$HOME/yandex-cloud/bin"
           source ~/.bashrc
+          echo "${{ secrets.YC_SERVICE_ACCOUNT_KEY }}" > /tmp/key.json
+          yc init --cloud-id=default --folder-id=default --service-account-key=/tmp/key.json --profile=default
+          yc config profile create default --service-account-key=/tmp/key.json
           yc version
           yc config list
 
