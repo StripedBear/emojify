@@ -67,6 +67,7 @@ jobs:
           mkdir -p $HOME/.kube
           echo "$KUBE_CONFIG_DATA" | base64 --decode > $HOME/.kube/config
           chmod 600 $HOME/.kube/config
+          kubectl config view
           helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
           helm upgrade --install prometheus prometheus-community/prometheus \
             -f prometheus-values.yaml --kubeconfig=$HOME/.kube/config
