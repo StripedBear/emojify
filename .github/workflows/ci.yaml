@@ -54,8 +54,20 @@ jobs:
       - name: Install Yandex Cloud CLI
         run: |
           curl -sSL https://storage.yandexcloud.net/yandexcloud-yc/install.sh | bash
+          echo "$HOME/yandex-cloud/bin" >> $GITHUB_PATH
           export PATH="$PATH:$HOME/yandex-cloud/bin"
-          yc version
+          source ~/.bashrc
+          echo "${{ secrets.YC_SERVICE_ACCOUNT_KEY }}" | base64 -d > /tmp/key.json
+          yc config set service-account-key /tmp/key.json
+          yc config set cloud-id ${{ secrets.YC_CLOUD_ID }}
+          yc config set folder-id ${{ secrets.YC_FOLDER_ID }}
+
+      - name: Get kubeconfig for Kubernetes
+        run: |
+          export PATH="$PATH:$HOME/yandex-cloud/bin"
+          mkdir -p $HOME/.kube
+          yc managed-kubernetes cluster get-credentials <имя-кластера> --external --force
+          mv ~/.kube/config $HOME/.kube/config
 
       - name: Set up kubectl
         uses: azure/setup-kubectl@v1
@@ -64,10 +76,6 @@ jobs:
 
       - name: Deploy Prometheus
         run: |
-          mkdir -p $HOME/.kube
-          echo "$KUBE_CONFIG_DATA" | base64 --decode > $HOME/.kube/config
-          chmod 600 $HOME/.kube/config
-          kubectl config view
           helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
           helm upgrade --install prometheus prometheus-community/prometheus \
             -f prometheus-values.yaml --kubeconfig=$HOME/.kube/config
