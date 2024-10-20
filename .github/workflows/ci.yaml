@@ -85,6 +85,10 @@ jobs:
           helm upgrade --install prometheus prometheus-community/prometheus \
             -f ./emojify-chart/prometheus-values.yaml --kubeconfig=$HOME/.kube/config
 
+      - name: Verify K8s cluster access
+        run: |
+          kubectl cluster-info --kubeconfig=$HOME/.kube/config
+
       - name: Deploy Graylog
         run: |
           echo "$KUBE_CONFIG_DATA" | base64 --decode > $HOME/.kube/config
