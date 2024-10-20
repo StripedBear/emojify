@@ -83,14 +83,14 @@ jobs:
         run: |
           helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
           helm upgrade --install prometheus prometheus-community/prometheus \
-            -f prometheus-values.yaml --kubeconfig=$HOME/.kube/config
+            -f ./emojify-chart/prometheus-values.yaml --kubeconfig=$HOME/.kube/config
 
       - name: Deploy Graylog
         run: |
           echo "$KUBE_CONFIG_DATA" | base64 --decode > $HOME/.kube/config
           helm repo add graylog https://helm.graylog2.org
           helm upgrade --install graylog graylog/graylog \
-            -f graylog-values.yaml --kubeconfig=kubeconfig
+            -f ./emojify-chart/graylog-values.yaml --kubeconfig=kubeconfig
 
       - name: Deploy Emojify
         env:
