@@ -88,8 +88,8 @@ jobs:
       - name: Deploy Graylog
         run: |
           echo "$KUBE_CONFIG_DATA" | base64 --decode > $HOME/.kube/config
-          kubectl apply -f ./emojify-chart/graylog-deployment.yaml --kubeconfig=$HOME/.kube/config
-          kubectl apply -f ./emojify-chart/graylog-service.yaml --kubeconfig=$HOME/.kube/config
+          kubectl apply -f ./emojify-chart/graylog-deployment.yaml --kubeconfig=$HOME/.kube/config --validate=false
+          kubectl apply -f ./emojify-chart/graylog-service.yaml --kubeconfig=$HOME/.kube/config --validate=false
 
       - name: Deploy Emojify
         env:
