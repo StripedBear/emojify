@@ -62,11 +62,17 @@ jobs:
           yc config set cloud-id ${{ secrets.YC_CLOUD_ID }}
           yc config set folder-id ${{ secrets.YC_FOLDER_ID }}
 
+      - name: Debug Yandex Cloud Configuration
+        run: |
+          yc config list
+          yc iam service-account list
+          yc managed-kubernetes cluster list
+
       - name: Get kubeconfig for Kubernetes
         run: |
           export PATH="$PATH:$HOME/yandex-cloud/bin"
           mkdir -p $HOME/.kube
-          yc managed-kubernetes cluster get-credentials catibk4jl9qj07la54b5 --external --force
+          yc managed-kubernetes cluster get-credentials klust --external --force
           mv ~/.kube/config $HOME/.kube/config
 
       - name: Set up kubectl
