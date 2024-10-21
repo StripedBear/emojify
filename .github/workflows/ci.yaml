@@ -83,6 +83,14 @@ jobs:
             --from-literal=SECRET_KEY="$SECRET_KEY" \
             --namespace default --dry-run=client -o yaml | kubectl apply -f -
 
+      - name: Deploy MongoDB
+        run: |
+          helm repo add bitnami https://charts.bitnami.com/bitnami
+          helm upgrade --install mongodb bitnami/mongodb \
+            --set auth.enabled=false \
+            --set replicaSet.enabled=false \
+            --set service.type=ClusterIP \
+            --namespace default --kubeconfig=$HOME/.kube/config
 
       - name: Deploy Prometheus
         run: |
