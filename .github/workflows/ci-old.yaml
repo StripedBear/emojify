@@ -24,6 +24,7 @@ jobs:
           curl -sSL https://storage.yandexcloud.net/yandexcloud-yc/install.sh | bash
           echo "$HOME/yandex-cloud/bin" >> $GITHUB_PATH
           export PATH="$PATH:$HOME/yandex-cloud/bin"
+          source ~/.bashrc
           echo "${{ secrets.YC_SERVICE_ACCOUNT_KEY }}" | base64 -d > /tmp/key.json
           yc config set service-account-key /tmp/key.json
           yc config set cloud-id ${{ secrets.YC_CLOUD_ID }}
@@ -55,19 +56,23 @@ jobs:
           curl -sSL https://storage.yandexcloud.net/yandexcloud-yc/install.sh | bash
           echo "$HOME/yandex-cloud/bin" >> $GITHUB_PATH
           export PATH="$PATH:$HOME/yandex-cloud/bin"
+          source ~/.bashrc
           echo "${{ secrets.YC_SERVICE_ACCOUNT_KEY }}" | base64 -d > /tmp/key.json
           yc config set service-account-key /tmp/key.json
           yc config set cloud-id ${{ secrets.YC_CLOUD_ID }}
           yc config set folder-id ${{ secrets.YC_FOLDER_ID }}
+
+      # - name: Debug Yandex Cloud Configuration
+      #  run: |
+      #    yc config list
+      #    yc iam service-account list
+      #    yc managed-kubernetes cluster list
 
       - name: Get kubeconfig for Kubernetes
         run: |
           export PATH="$PATH:$HOME/yandex-cloud/bin"
           mkdir -p $HOME/.kube
           yc managed-kubernetes cluster get-credentials klust --external --force
-          kubectl config view
-          kubectl config current-context
-          kubectl config use-context $(kubectl config current-context)
 
       - name: Set up kubectl
         uses: azure/setup-kubectl@v1
@@ -80,12 +85,25 @@ jobs:
           helm upgrade --install prometheus prometheus-community/prometheus \
             -f ./emojify-chart/prometheus-values.yaml --kubeconfig=$HOME/.kube/config
 
+      - name: Verify K8s cluster access
+        run: |
+          kubectl cluster-info --kubeconfig=$HOME/.kube/config
+
+      - name: Set up kubeconfig
+        run: |
+          echo "$KUBE_CONFIG_DATA" | base64 --decode > $HOME/.kube/config
+          kubectl config get-contexts --kubeconfig=$HOME/.kube/config
+          kubectl config use-context yc-klust --kubeconfig=$HOME/.kube/config
+
+
       - name: Deploy Graylog
         run: |
-          helm repo add graylog https://helm.graylog2.org
-          helm upgrade --install graylog graylog/graylog \
-            -f ./emojify-chart/graylog-values.yaml --kubeconfig=$HOME/.kube/config
+          kubectl apply -f ./emojify-chart/graylog-deployment.yaml --kubeconfig=$HOME/.kube/config --validate=false
+          kubectl apply -f ./emojify-chart/graylog-service.yaml --kubeconfig=$HOME/.kube/config --validate=false
 
       - name: Deploy Emojify
+        env:
+          KUBE_CONFIG_DATA: ${{ secrets.KUBE_CONFIG_DATA }}
         run: |
-          helm upgrade --install emojify ./emojify-chart --kubeconfig=$HOME/.kube/config
+          echo "$KUBE_CONFIG_DATA" | base64 --decode > kubeconfig
+          helm upgrade --install emojify ./emojify-chart --kubeconfig=kubeconfig
