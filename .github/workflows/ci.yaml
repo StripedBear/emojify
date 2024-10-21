@@ -93,7 +93,7 @@ jobs:
         run: |
           echo "$KUBE_CONFIG_DATA" | base64 --decode > $HOME/.kube/config
           kubectl config get-contexts --kubeconfig=$HOME/.kube/config
-          ubectl config use-context yc-klust --kubeconfig=$HOME/.kube/config
+          kubectl config use-context yc-klust --kubeconfig=$HOME/.kube/config
 
 
       - name: Deploy Graylog
