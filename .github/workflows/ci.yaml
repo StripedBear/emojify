@@ -74,6 +74,16 @@ jobs:
         with:
           version: 'latest'
 
+      - name: Create Kubernetes Secret for Emojify
+        env:
+          KUBE_CONFIG_DATA: ${{ secrets.KUBE_CONFIG_DATA }}
+          SECRET_KEY: ${{ secrets.SECRET_KEY }}
+        run: |
+          kubectl --kubeconfig=$HOME/.kube/config create secret generic emojify-secrets \
+            --from-literal=SECRET_KEY="$SECRET_KEY" \
+            --namespace default --dry-run=client -o yaml | kubectl apply -f -
+
+
       - name: Deploy Prometheus
         run: |
           helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
