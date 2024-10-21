@@ -6,7 +6,7 @@ metadata:
     app: emojify
     prometheus: scrappable
 spec:
-  replicas: {{ .Values.replicaCount }}
+  replicas: 1
   selector:
     matchLabels:
       app: emojify
@@ -17,6 +17,8 @@ spec:
         prometheus: scrappable
     spec:
       serviceAccountName: {{ .Values.serviceAccount.name }}
+      imagePullSecrets:
+        - name: regcred  # Указываем имя секрета для доступа к приватному реестру
       containers:
         - name: emojify
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
@@ -24,7 +26,10 @@ spec:
             - containerPort: 8080
           env:
             - name: SECRET_KEY
-              value: {{ .Values.env.SECRET_KEY }}
+              valueFrom:
+                secretKeyRef:
+                  name: emojify-secrets
+                  key: SECRET_KEY
           resources:
             limits:
               cpu: {{ .Values.resources.limits.cpu }}
