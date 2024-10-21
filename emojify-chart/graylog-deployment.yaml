@@ -26,3 +26,5 @@ spec:
               value: "$(echo -n 'admin_password' | sha256sum | awk '{print $1}')"
             - name: GRAYLOG_HTTP_EXTERNAL_URI
               value: "http://graylog:9000/"
+            - name: MONGO_URI
+              value: "mongodb://mongodb.default.svc.cluster.local:27017/graylog"

@@ -16,3 +16,4 @@ graylog:
     GRAYLOG_PASSWORD_SECRET: "${{ secrets.SECRET_KEY }}"
     GRAYLOG_ROOT_PASSWORD_SHA2: "$(echo -n '${{ secrets.GRAYLOG_ADMIN_PSWD }}' | sha256sum | awk '{print $1}')"
     GRAYLOG_HTTP_EXTERNAL_URI: "http://<EXTERNAL-IP>:9000/"
+    MONGO_URI: "mongodb://mongodb.default.svc.cluster.local:27017/graylog"
