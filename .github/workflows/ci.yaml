@@ -89,6 +89,13 @@ jobs:
         run: |
           kubectl cluster-info --kubeconfig=$HOME/.kube/config
 
+      - name: Set up kubeconfig
+        run: |
+          echo "$KUBE_CONFIG_DATA" | base64 --decode > $HOME/.kube/config
+          kubectl config get-contexts --kubeconfig=$HOME/.kube/config
+          ubectl config use-context yc-klust --kubeconfig=$HOME/.kube/config
+
+
       - name: Deploy Graylog
         run: |
           echo "$KUBE_CONFIG_DATA" | base64 --decode > $HOME/.kube/config
