@@ -2,7 +2,7 @@ replicaCount: 1
 
 image:
   # repository: cr.yandex/${{ secrets.YC_REGISTRY }}/emojify
-  repository: cr.yandex/crp0mphe2upo4f6rrlbl/emojify:latest
+  repository: cr.yandex/crp0mphe2upo4f6rrlbl/emojify
   tag: "latest"
   pullPolicy: IfNotPresent
 
