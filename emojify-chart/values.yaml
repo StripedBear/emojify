@@ -9,6 +9,10 @@ service:
   type: LoadBalancer
   port: 80
 
+serviceAccount:
+  create: true
+  name: emojify-service-account
+
 resources:
   limits:
     cpu: 100m

@@ -16,6 +16,7 @@ spec:
         app: emojify
         prometheus: scrappable
     spec:
+      serviceAccountName: {{ .Values.serviceAccount.name }}
       containers:
         - name: emojify
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
