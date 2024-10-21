@@ -23,3 +23,12 @@ resources:
 
 env:
   SECRET_KEY: "${{ secrets.SECRET_KEY }}"
+
+ingress:
+  enabled: false
+  annotations: {}
+  hosts:
+    - host: emojify.example.com
+      paths:
+        - /
+  tls: []
