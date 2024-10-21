@@ -28,3 +28,15 @@ scrape_configs:
       - source_labels: [__meta_kubernetes_service_name]
         action: keep
         regex: emojify
+
+nodeExporter:
+  enabled: false
+
+pushgateway:
+  enabled: false
+
+alertmanager:
+  enabled: true
+
+kubeStateMetrics:
+  enabled: true
