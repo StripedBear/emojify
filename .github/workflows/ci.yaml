@@ -82,9 +82,8 @@ jobs:
 
       - name: Deploy Graylog
         run: |
-          helm repo add graylog https://helm.graylog2.org
-          helm upgrade --install graylog graylog/graylog \
-            -f ./emojify-chart/graylog-values.yaml --kubeconfig=$HOME/.kube/config
+          kubectl apply -f ./emojify-chart/graylog-deployment.yaml --kubeconfig=$HOME/.kube/config
+          kubectl apply -f ./emojify-chart/graylog-service.yaml --kubeconfig=$HOME/.kube/config
 
       - name: Deploy Emojify
         run: |
