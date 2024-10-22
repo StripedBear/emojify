@@ -85,4 +85,4 @@ jobs:
 
       - name: Deploy Emojify
         run: |
-          helm upgrade --install emojify ./emojify-chart --kubeconfig=$HOME/.kube/config
+          helm upgrade --install emojify ./emojify-chart --set registry=${{ secrets.YC_REGISTRY }} --kubeconfig=$HOME/.kube/config
