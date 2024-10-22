@@ -1,7 +1,6 @@
 package main
 
 import (
-    // "encoding/json"
     "fmt"
     "html/template"
     "net/http"
@@ -33,14 +32,6 @@ var (
 func init() {
     prometheus.MustRegister(httpRequestsTotal)
     prometheus.MustRegister(requestDuration)
-}
-
-type request struct {
-    Text string `json:"text"`
-}
-
-type response struct {
-    Result string `json:"result"`
 }
 
 func emojiToCode(text string) string {
@@ -82,23 +73,74 @@ func indexHandler(w http.ResponseWriter, r *http.Request) {
         <head>
             <meta charset="UTF-8">
             <title>Emoji Converter</title>
+            <style>
+                body {
+                    font-family: Arial, sans-serif;
+                    background: linear-gradient(to bottom, #FFA500, #FFFFFF, #1E90FF);
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    height: 100vh;
+                    margin: 0;
+                }
+                .container {
+                    background: rgba(255, 255, 255, 0.8);
+                    padding: 20px;
+                    border-radius: 10px;
+                    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+                    width: 400px;
+                    text-align: center;
+                }
+                h1 {
+                    color: #FF4500;
+                }
+                form {
+                    margin-bottom: 20px;
+                }
+                textarea {
+                    width: 100%;
+                    padding: 10px;
+                    border-radius: 5px;
+                    border: 1px solid #CCCCCC;
+                }
+                input[type="submit"] {
+                    background-color: #1E90FF;
+                    color: white;
+                    border: none;
+                    padding: 10px 20px;
+                    border-radius: 5px;
+                    cursor: pointer;
+                }
+                input[type="submit"]:hover {
+                    background-color: #4682B4;
+                }
+                pre {
+                    background-color: #F0F8FF;
+                    padding: 10px;
+                    border-radius: 5px;
+                    border: 1px solid #CCCCCC;
+                    text-align: left;
+                }
+            </style>
         </head>
         <body>
-            <h1>Emoji Converter</h1>
-            <form method="POST" action="/convert">
-                <textarea name="text" rows="4" cols="50" placeholder="Enter text with emojis..."></textarea>
-                <br>
-                <input type="submit" value="Convert to Codes">
-            </form>
+            <div class="container">
+                <h1>Emoji Converter</h1>
+                <form method="POST" action="/convert">
+                    <textarea name="text" rows="4" cols="50" placeholder="Enter text with emojis..."></textarea>
+                    <br>
+                    <input type="submit" value="Convert to Codes">
+                </form>
 
-            <form method="POST" action="/reverse">
-                <textarea name="text" rows="4" cols="50" placeholder="Enter text with codes like \U+1F600..."></textarea>
-                <br>
-                <input type="submit" value="Convert to Emojis">
-            </form>
+                <form method="POST" action="/reverse">
+                    <textarea name="text" rows="4" cols="50" placeholder="Enter text with codes like \U+1F600..."></textarea>
+                    <br>
+                    <input type="submit" value="Convert to Emojis">
+                </form>
 
-            <h2>Result:</h2>
-            <pre>{{.}}</pre>
+                <h2>Result:</h2>
+                <pre>{{.}}</pre>
+            </div>
         </body>
         </html>
     `))
