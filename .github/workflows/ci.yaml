@@ -1,12 +1,6 @@
 name: CI/CD Pipeline
 
 on:
-  push:
-    branches:
-      - main
-  pull_request:
-    branches:
-      - main
   workflow_dispatch:
 
 jobs:
@@ -83,36 +77,12 @@ jobs:
             --from-literal=SECRET_KEY="$SECRET_KEY" \
             --namespace default --dry-run=client -o yaml | kubectl apply -f -
 
-      - name: Deploy MongoDB
-        run: |
-          helm repo add bitnami https://charts.bitnami.com/bitnami
-          helm upgrade --install mongodb bitnami/mongodb \
-            --set auth.enabled=false \
-            --set replicaSet.enabled=false \
-            --set service.type=ClusterIP \
-            --namespace default --kubeconfig=$HOME/.kube/config
-
       - name: Deploy Prometheus
         run: |
           helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
           helm upgrade --install prometheus prometheus-community/prometheus \
             -f ./emojify-chart/prometheus-values.yaml --kubeconfig=$HOME/.kube/config
 
-      - name: Deploy Loki Stack (Loki, Promtail, Grafana)
-        run: |
-          helm repo add grafana https://grafana.github.io/helm-charts
-          helm upgrade --install loki-stack grafana/loki-stack \
-            --set grafana.enabled=true \
-            --set promtail.enabled=true \
-            --set loki.enabled=true \
-            --set grafana.service.type=LoadBalancer \
-            --set grafana.service.port=80 \
-            --namespace default --kubeconfig=$HOME/.kube/config
-
-          # Применение конфигурации Grafana datasource для подключения к Loki
-          kubectl apply -f ./emojify-chart/grafana-datasource.yaml --kubeconfig=$HOME/.kube/config
-
       - name: Deploy Emojify
         run: |
           helm upgrade --install emojify ./emojify-chart --kubeconfig=$HOME/.kube/config
-

@@ -1,3 +1,4 @@
+# Конфигурация для установки Prometheus с помощью Helm
 alertmanager:
   enabled: true
   service:
@@ -12,6 +13,7 @@ server:
 pushgateway:
   enabled: false
 
+# Ресурсы для сервера Prometheus
 resources:
   limits:
     cpu: 500m
@@ -20,23 +22,25 @@ resources:
     cpu: 250m
     memory: 256Mi
 
-scrape_configs:
-  - job_name: 'emojify'
-    kubernetes_sd_configs:
-      - role: endpoints
-    relabel_configs:
-      - source_labels: [__meta_kubernetes_service_name]
-        action: keep
-        regex: emojify
+# Настройки для сбора метрик с приложения emojify
+serverFiles:
+  prometheus.yml:
+    scrape_configs:
+      - job_name: 'emojify'
+        metrics_path: /metrics
+        kubernetes_sd_configs:
+          - role: endpoints
+        relabel_configs:
+          - source_labels: [__meta_kubernetes_service_name]
+            action: keep
+            regex: emojify
 
+# Дополнительные настройки для компонентов Prometheus
 nodeExporter:
   enabled: false
 
-pushgateway:
-  enabled: false
-
-alertmanager:
+kubeStateMetrics:
   enabled: true
 
-kubeStateMetrics:
+alertmanager:
   enabled: true
