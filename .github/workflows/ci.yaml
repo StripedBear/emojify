@@ -107,7 +107,7 @@ jobs:
             --set loki.enabled=true \
             --set grafana.service.type=NodePort \
             --namespace default --kubeconfig=$HOME/.kube/config
-         kubectl apply -f ,.emojify-chart/grafana-datasource.yaml
+         kubectl apply -f ./emojify-chart/grafana-datasource.yaml
 
       - name: Deploy Emojify
         run: |
