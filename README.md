@@ -1,24 +1,67 @@
-# emojify
-A simple unicode emoji converter for terminal apps, written in Go.
+# Emojify
 
-[![GoDoc](https://godoc.org/github.com/haukened/emojify?status.svg)](https://godoc.org/github.com/haukened/emojify) [![Build Status](https://travis-ci.com/haukened/emojify.svg?branch=master)](https://travis-ci.com/haukened/emojify)
+`Emojify` — это приложение, развернутое в Kubernetes с использованием CI/CD и инструментов мониторинга, таких как Prometheus. Оно предназначено для обработки текста с эмодзи.
 
-This list currently has about 2100 supported unicode emojis and aliases.  They aren't yet perfect, and contributions are welcome!
+## Устройство репозитория
 
-## Usage (as a package)
-`import "github.com/haukened/emojify"`\
-and then\
-`fmt.Println(emojify.Render(":beer:"))`
+Этот репозиторий включает следующие основные директории и файлы:
 
-## Usage (as a useless command line program)
+- **`emojify/`** — Исходный код приложения `emojify` на Go.
+- **`emojify-chart/`** — Helm-чарт для развертывания приложения в Kubernetes:
+  - `values.yaml` — Настройки для конфигурации развертывания.
+  - `templates/` — Манифесты Kubernetes для приложения (`deployment.yaml`, `service.yaml`).
+  - `prometheus-values.yaml` — Настройки для развертывания Prometheus.
+- **`.github/workflows/ci-cd.yml`** — GitHub Actions workflow для автоматизации CI/CD.
 
-```
-git clone https://github.com/haukened/emojify.git
-cd emojify/cmd/emojify
-go build
-./emojify :beer:
-```
+## Развертывание инфраструктуры
+
+Для развертывания инфраструктуры на Яндекс.Облаке необходимо выполнить следующие шаги:
+
+1. **Создание Kubernetes-кластера в Яндекс.Облаке**:
+   - Используйте `yc` CLI для создания Kubernetes-кластера и получения kubeconfig.
+   - Настройте `kubeconfig` для подключения к кластеру:
+     ```bash
+     yc managed-kubernetes cluster get-credentials <имя_кластера> --external
+     ```
+
+2. **Создание реестра контейнеров в Яндекс.Облаке**:
+   - Создайте реестр Docker-образов:
+     ```bash
+     yc container registry create --name <имя_реестра>
+     ```
+
+3. **Настройка доступа к реестру**:
+   - Сохраните учетные данные в GitHub Secrets:
+     - `YC_SERVICE_ACCOUNT_KEY` — ключ сервисного аккаунта.
+     - `YC_REGISTRY` — идентификатор реестра контейнеров.
+     - `CLUSTER_NAME` — имя вашего Kubernetes-кластера.
+     - `SECRET_KEY` — секретный ключ для приложения.
+     - `YC_CLOUD_ID` и `YC_FOLDER_ID` — идентификаторы облака и папки.
+
+## Развертывание приложения
+
+Приложение разворачивается вручную:
+
+1. **Запуск сборки и деплоя вручную**:
+   - Перейдите в Actions в репозитории на GitHub и запустите workflow `CI/CD Pipeline`.
+   - Это выполнит следующие шаги:
+     - Сборка Docker-образа и загрузка в реестр.
+     - Развертывание Prometheus через Helm.
+     - Развертывание приложения `emojify` в Kubernetes.
+
+2. **Доступ к приложению**:
+   - Найдите внешний IP-адрес, выданный Kubernetes для LoadBalancer, с помощью:
+     ```bash
+     kubectl get services
+     ```
+   - Приложение будет доступно по этому IP-адресу.
+
+## Правила внесения изменений в инфраструктуру
+
+Все изменения в инфраструктуре описаны с использованием Helm-чарта и YAML-манифестов:
+
+- **Helm-чарт** используется для конфигурации развертывания приложения `emojify` и Prometheus.
+- Изменения в файлах `values.yaml` или `deployment.yaml` влияют на параметры развертывания.
+- Для добавления новых переменных или секретов, обновите соответствующий файл и добавьте секреты в GitHub Actions.
 
 
-# New change to trigger CI/CD
-# New change to trigger CI/CD again
