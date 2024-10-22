@@ -98,10 +98,15 @@ jobs:
           helm upgrade --install prometheus prometheus-community/prometheus \
             -f ./emojify-chart/prometheus-values.yaml --kubeconfig=$HOME/.kube/config
 
-      - name: Deploy Graylog
+      - name: Deploy Loki Stack (Loki, Promtail, Grafana)
         run: |
-          kubectl apply -f ./emojify-chart/graylog-deployment.yaml --kubeconfig=$HOME/.kube/config
-          kubectl apply -f ./emojify-chart/graylog-service.yaml --kubeconfig=$HOME/.kube/config
+          helm repo add grafana https://grafana.github.io/helm-charts
+          helm upgrade --install loki-stack grafana/loki-stack \
+            --set grafana.enabled=true \
+            --set promtail.enabled=true \
+            --set loki.enabled=true \
+            --set grafana.service.type=NodePort \
+            --namespace default --kubeconfig=$HOME/.kube/config
 
       - name: Deploy Emojify
         run: |
