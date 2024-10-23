@@ -76,7 +76,7 @@ func indexHandler(w http.ResponseWriter, r *http.Request) {
             <style>
                 body {
                     font-family: Arial, sans-serif;
-                    background: linear-gradient(to bottom, #FFA500, #FFFFFF, #1E90FF);
+                    background: linear-gradient(to bottom, #b800ff, #FFFFFF, #1E90FF);
                     display: flex;
                     justify-content: center;
                     align-items: center;
